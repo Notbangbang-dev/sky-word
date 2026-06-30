@@ -31,12 +31,13 @@ import {
 const REPO_URL = '';
 
 const MSG = {
+  winFirst: 'First light — solved on the very first try. The sky was listening. ✦',
+  winLast: 'Caught it on the last row — but the map is complete. ✦',
   win: [
-    'First light — solved on the very first try. The sky was listening. ✦',
     'Transmission received in {n}. Adding this one to your star chart.',
     'Coordinates confirmed in {n}. Beautifully done. ✦',
     'Signal locked in {n}. Constellation charted.',
-    'Caught it on the last row — but the map is complete. ✦',
+    'Solved in {n} — the sky was listening. ✦',
   ],
   lose: [
     'Signal lost. The word was drifting just out of reach: {WORD}.',
@@ -328,7 +329,10 @@ function finishGame(rowIndex) {
       confetti.meteor();
     }
     const n = game.guesses.length;
-    const line = n === 1 ? MSG.win[0] : pick(MSG.win.slice(1)).replace('{n}', `${n}/6`);
+    let line;
+    if (n === 1) line = MSG.winFirst;
+    else if (n === game.maxGuesses) line = MSG.winLast;
+    else line = pick(MSG.win).replace('{n}', `${n}/6`);
     ui.showMessage(line);
 
     if (state.mode === 'daily') {
