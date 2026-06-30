@@ -1,0 +1,10 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Node (only used for the optional dev server / word check)
+node_modules/
+
+# Local previews
+.cache/

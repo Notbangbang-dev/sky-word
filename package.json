@@ -1,0 +1,14 @@
+{
+  "name": "sky-word",
+  "version": "1.0.0",
+  "description": "Sky Word — a celestial daily word game. Guess the word, ignite the tiles, chart a constellation.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "python -m http.server 4317",
+    "serve": "npx --yes serve -l 4317 .",
+    "check": "node tools/check-words.mjs"
+  },
+  "keywords": ["word-game", "wordle", "game", "vanilla-js", "static-site"],
+  "license": "MIT"
+}

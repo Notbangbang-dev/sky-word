@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sky Word — a celestial word game</title>
+    <meta
+      name="description"
+      content="Sky Word — a cosmic take on the daily word game. Guess the hidden word, ignite the tiles, and chart a new constellation every time you win."
+    />
+    <meta name="theme-color" content="#060814" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:title" content="Sky Word" />
+    <meta property="og:description" content="A celestial word game. Guess the word, chart a constellation." />
+    <meta property="og:type" content="website" />
+
+    <!-- Inline star favicon (no asset file needed) -->
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%23060814"/><path d="M16 5l2.6 7.2L26 14l-6.2 4.1L21 26l-5-4.4L11 26l1.2-7.9L6 14l7.4-1.8z" fill="%232BE6C8"/></svg>'
+    />
+
+    <!-- Fonts: Fraunces (display) + Space Grotesk (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body data-phase="night">
+    <!-- Living sky backdrop -->
+    <div class="sky" aria-hidden="true">
+      <div class="sky-gradient"></div>
+      <canvas id="starfield"></canvas>
+      <div class="aurora"></div>
+      <div id="celestial" class="celestial" data-body="moon"></div>
+    </div>
+
+    <a class="skip-link" href="#board">Skip to the board</a>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26">
+            <path
+              d="M12 2.5l2 5.6 5.8 1.4-4.8 3.2.9 6L12 16.6 8.1 18.7l.9-6L4.2 9.5 10 8.1z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <h1 class="brand-name">Sky&nbsp;Word</h1>
+      </div>
+
+      <div class="toolbar">
+        <button id="btn-help" class="icon-btn" type="button" aria-label="How to play" title="How to play">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14a4 4 0 00-4 4h2a2 2 0 114 0c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5a4 4 0 00-4-4z"/></svg>
+        </button>
+        <button id="btn-stats" class="icon-btn" type="button" aria-label="Statistics" title="Statistics">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M5 21V9h3v12H5zm5.5 0V3h3v18h-3zM16 21v-7h3v7h-3z"/></svg>
+        </button>
+        <button id="btn-chart" class="icon-btn" type="button" aria-label="Star chart" title="Star chart">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M6 7l1.2 2.8L10 11l-2.8 1.2L6 15l-1.2-2.8L2 11l2.8-1.2L6 7zm11-4l1 2.4L21 6.5 18.6 7.5 17.6 10 16.6 7.5 14.2 6.5 16.6 5.5 17 3zM16 13l1.4 3.3L21 17.7l-3.6 1.4L16 22.5l-1.4-3.4L11 17.7l3.6-1.4L16 13z"/></svg>
+        </button>
+        <button id="btn-settings" class="icon-btn" type="button" aria-label="Settings" title="Settings">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.6 7.6 0 000-1.88l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7 7 0 00-1.62-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54c-.58.24-1.12.55-1.62.94l-2.39-.96a.5.5 0 00-.6.22L2.7 8.84a.5.5 0 00.12.64l2.03 1.58a7.6 7.6 0 000 1.88l-2.03 1.58a.5.5 0 00-.12.64l1.92 3.32c.13.22.39.31.6.22l2.39-.96c.5.39 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.55 1.62-.94l2.39.96c.21.09.47 0 .6-.22l1.92-3.32a.5.5 0 00-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1112 8.5a3.5 3.5 0 010 7z"/></svg>
+        </button>
+        <button id="btn-theme" class="icon-btn" type="button" aria-label="Toggle day / night" title="Toggle day / night">
+          <span class="theme-glyph"></span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="modebar" aria-label="Game mode">
+      <div class="mode-tabs" role="tablist">
+        <button id="tab-daily" class="mode-tab is-active" role="tab" aria-selected="true" type="button">
+          Daily Transmission
+        </button>
+        <button id="tab-unlimited" class="mode-tab" role="tab" aria-selected="false" type="button">
+          Deep Space
+        </button>
+      </div>
+      <div id="unlimited-controls" class="unlimited-controls" hidden>
+        <div class="len-select" role="group" aria-label="Word length">
+          <button class="len-btn" data-len="4" type="button">4</button>
+          <button class="len-btn is-active" data-len="5" type="button">5</button>
+          <button class="len-btn" data-len="6" type="button">6</button>
+        </div>
+        <button id="btn-new" class="pill-btn" type="button">New word</button>
+      </div>
+      <div id="daily-meta" class="daily-meta"></div>
+    </nav>
+
+    <main class="play">
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+
+      <section class="board-wrap">
+        <div id="board" class="board" aria-label="Guess board"></div>
+        <svg id="constellation-lines" class="constellation-lines" aria-hidden="true"></svg>
+        <div id="constellation-label" class="constellation-label" hidden></div>
+      </section>
+    </main>
+
+    <div id="keyboard" class="keyboard" aria-label="On-screen keyboard"></div>
+
+    <!-- ============ Modals ============ -->
+    <div id="overlay" class="overlay" hidden>
+      <!-- Help -->
+      <div id="help-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+        <button class="modal-close" data-close type="button" aria-label="Close">×</button>
+        <h2 id="help-title" class="modal-title">How to play</h2>
+        <p>Guess the hidden word in <strong>6 tries</strong>. Each guess must be a real word. Hit <kbd>Enter</kbd> to lock it in.</p>
+        <p>After each guess, the tiles ignite to show how close you were:</p>
+        <ul class="legend">
+          <li><span class="legend-tile correct" data-glyph="★"></span> The letter is in the word <em>and</em> in the right spot.</li>
+          <li><span class="legend-tile present" data-glyph="○"></span> The letter is in the word, but somewhere else.</li>
+          <li><span class="legend-tile absent" data-glyph="·"></span> The letter isn't in the word at all.</li>
+        </ul>
+        <p class="hint">
+          Solve the <strong>Daily Transmission</strong> to chart a new <strong>constellation</strong> — collected
+          forever in your star chart. Or drift through <strong>Deep Space</strong> for endless play in 4, 5, or 6 letters.
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div id="stats-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="stats-title" hidden>
+        <button class="modal-close" data-close type="button" aria-label="Close">×</button>
+        <h2 id="stats-title" class="modal-title">Observations</h2>
+        <div id="stats-grid" class="stats-grid"></div>
+        <h3 class="subhead">Light readings</h3>
+        <div id="dist" class="dist"></div>
+        <div id="countdown" class="countdown"></div>
+        <div class="modal-actions">
+          <button id="btn-share" class="primary-btn" type="button">
+            <span class="share-ic" aria-hidden="true">✦</span> Share transmission
+          </button>
+        </div>
+      </div>
+
+      <!-- Star chart -->
+      <div id="chart-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="chart-title" hidden>
+        <button class="modal-close" data-close type="button" aria-label="Close">×</button>
+        <h2 id="chart-title" class="modal-title">Star chart</h2>
+        <p class="muted-line">Every solved Daily charts a constellation. Here's your sky so far.</p>
+        <div id="chart-list" class="chart-list"></div>
+      </div>
+
+      <!-- Settings -->
+      <div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+        <button class="modal-close" data-close type="button" aria-label="Close">×</button>
+        <h2 id="settings-title" class="modal-title">Settings</h2>
+        <ul class="settings-list">
+          <li>
+            <div><strong>Hard mode</strong><span>Any revealed hint must be used in later guesses.</span></div>
+            <label class="switch"><input id="set-hard" type="checkbox" /><span class="track"></span></label>
+          </li>
+          <li>
+            <div><strong>Colorblind glyphs</strong><span>Stars, rings &amp; dots on every tile and key.</span></div>
+            <label class="switch"><input id="set-glyphs" type="checkbox" /><span class="track"></span></label>
+          </li>
+          <li>
+            <div><strong>High-contrast symbols</strong><span>Larger, bolder state glyphs.</span></div>
+            <label class="switch"><input id="set-contrast" type="checkbox" /><span class="track"></span></label>
+          </li>
+          <li>
+            <div><strong>Sound</strong><span>Soft generated tones for taps, wins &amp; losses.</span></div>
+            <label class="switch"><input id="set-sound" type="checkbox" /><span class="track"></span></label>
+          </li>
+          <li>
+            <div><strong>Reduce motion</strong><span>Calm the sky and reveal animations.</span></div>
+            <label class="switch"><input id="set-motion" type="checkbox" /><span class="track"></span></label>
+          </li>
+          <li>
+            <div><strong>Extra words online</strong><span>Accept more real guesses via a dictionary when the local list misses.</span></div>
+            <label class="switch"><input id="set-online" type="checkbox" /><span class="track"></span></label>
+          </li>
+        </ul>
+        <div class="modal-actions">
+          <button id="btn-theme-mode" class="ghost-btn" type="button">Theme: Auto</button>
+        </div>
+        <p class="credit">Sky Word · made with starlight · <a id="repo-link" href="#" target="_blank" rel="noopener">source</a></p>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" hidden></div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
